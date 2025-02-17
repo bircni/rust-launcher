@@ -12,49 +12,94 @@ pub fn app() -> Harness<'static> {
     })
 }
 
+fn command(harness: &mut Harness<'static>, theme: ThemePreference, cmd: (&str, &str)) {
+    harness
+        .get_by_role_and_label(Role::Button, "Add Command")
+        .click();
+
+    harness.run();
+
+    harness
+        .get_all_by_role(Role::TextInput)
+        .find(|n| n.placeholder().is_some_and(|s| s == "Name"))
+        .unwrap()
+        .type_text(cmd.0);
+    harness.run();
+    // Workaround for the text not being typed in twice
+    harness.get_by_role_and_label(Role::Button, "Add").focus();
+    harness.run();
+    harness
+        .get_all_by_role(Role::MultilineTextInput)
+        .find(|n| n.placeholder().is_some_and(|s| s == "Command"))
+        .unwrap()
+        .type_text(cmd.1);
+
+    harness.run();
+    harness.snapshot(&format!("{}_{theme:?}_input_command", cmd.0));
+
+    harness.get_by_role_and_label(Role::Button, "Add").click();
+
+    harness.run();
+    harness.snapshot(&format!("{}_{theme:?}_add_command_end", cmd.0));
+
+    // Here we need to click the correct button in the future
+    harness
+        .get_all_by_role(Role::Button)
+        .find(|n| n.label().is_some_and(|s| s == "Run"))
+        .unwrap()
+        .click();
+
+    harness.run();
+    harness.snapshot(&format!("{}_{theme:?}_run_command", cmd.0));
+}
+
 #[tokio::test]
 pub async fn test_main_view() {
     let themes = vec![ThemePreference::Dark, ThemePreference::Light];
+    let commands = vec![
+        ("CMD-1", "echo 'Hello World 1'"),
+        ("CMD-2", "echo 'Hello World 2'"),
+        ("CMD-3", "echo 'Hello World 3'"),
+    ];
+
     for theme in themes {
         let mut harness = app();
         harness.ctx.set_theme(theme);
+
         harness.run();
-        harness.snapshot(&format!("main_view_{theme:?}"));
+        harness.snapshot(&format!("{theme:?}_main_view"));
+
         harness
             .get_by_role_and_label(Role::Button, "Add Group")
             .click();
-        harness.run();
 
-        harness.snapshot(&format!("add_group_{theme:?}"));
-        // let label = "Group Name";
-        // harness
-        //     .get_by_role_and_label(Role::TextInput, "Group Name")
-        //     .type_text(label);
+        harness.run();
+        harness.snapshot(&format!("{theme:?}_add_group"));
 
         harness
-            .get_by_role_and_label(Role::Button, "Close window")
-            .click();
+            .get_all_by_role(Role::TextInput)
+            .find(|a| a.placeholder().is_some_and(|s| s == "Group Name"))
+            .unwrap()
+            .type_text("Test Group");
+
         harness.run();
+        harness.snapshot(&format!("{theme:?}_input_group_name"));
 
-        harness.snapshot(&format!("add_group_close_{theme:?}"));
+        harness.get_by_role_and_label(Role::Button, "Add").click();
 
-        harness
-            .get_by_role_and_label(Role::Button, "Add Command")
-            .click();
         harness.run();
+        harness.snapshot(&format!("{theme:?}_add_group_end"));
 
-        harness.snapshot(&format!("add_command_{theme:?}"));
+        for cmd in &commands {
+            command(&mut harness, theme, *cmd);
+        }
 
-        harness
-            .get_by_role_and_label(Role::Button, "Close window")
-            .click();
         harness.run();
-
-        harness.snapshot(&format!("add_command_close_{theme:?}"));
+        harness.snapshot(&format!("{theme:?}_commands_finalized"));
 
         harness.get_by_role_and_label(Role::Button, " ? ").click();
-        harness.run();
 
-        harness.snapshot(&format!("about_{theme:?}"));
+        harness.run();
+        harness.snapshot(&format!("{theme:?}_about_dialog"));
     }
 }

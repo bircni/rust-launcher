@@ -1,4 +1,6 @@
-use egui::{vec2, CentralPanel, Color32, Context, ScrollArea, SidePanel, TextEdit, TextStyle};
+use egui::{
+    vec2, Button, CentralPanel, Color32, Context, ScrollArea, SidePanel, TextEdit, TextStyle,
+};
 use statusbar::StatusBar;
 use std::f32;
 
@@ -53,7 +55,7 @@ impl App {
                 .show(ui, &mut self.config)
                 .unwrap_or_else(|e| {
                     println!("{e:?}");
-                    // se'lf.toasts.error(e.to_string());
+                    // self.toasts.error(e.to_string());
                 });
             ui.vertical_centered(|ui| {
                 ui.separator();
@@ -64,10 +66,13 @@ impl App {
                     for command in &self.config.commands {
                         if command.group_id == group.id {
                             ui.horizontal(|ui| {
-                                ui.button("Run").clicked().then(|| {
-                                    println!("Running command: {}", command.command);
-                                    self.cmd_result = command.run();
-                                });
+                                ui.add(Button::new("Run"))
+                                    .on_hover_text(format!("Run {}", command.name))
+                                    .clicked()
+                                    .then(|| {
+                                        println!("Running command: {}", command.command);
+                                        self.cmd_result = command.run();
+                                    });
                                 ui.label(format!("{} | {}", command.name, command.command));
                             });
                         }

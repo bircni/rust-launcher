@@ -18,6 +18,10 @@ egui_kittest = { version = "0.31", features = ["wgpu", "snapshot"] }
 eframe = { version = "0.31", features = ["wgpu"] }
 tokio = { version = "1", features = ["time", "rt", "macros"] }
 
+[patch.crates-io]
+egui = { git = "https://github.com/bircni/egui.git", branch = "feature/set-hint_text"}
+epaint = { git = "https://github.com/bircni/egui.git", branch = "feature/set-hint_text"}
+
 [lints.rust]
 unsafe_code = "deny"
 deprecated = "warn"
