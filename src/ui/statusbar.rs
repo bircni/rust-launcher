@@ -1,6 +1,6 @@
 use egui::{vec2, Align, Align2, Button, ComboBox, Frame, Layout, TextEdit, Ui, Window};
 
-use crate::data::{CommandItem, Config, Group};
+use crate::data::{commands::CommandItem, config::Config, Group};
 
 pub struct StatusBar {
     show_about: bool,
@@ -81,8 +81,11 @@ impl StatusBar {
             .frame(Frame::window(ui.style()).fill(ui.style().visuals.widgets.open.weak_bg_fill))
             .show(ui.ctx(), |ui| {
                 ui.vertical_centered(|ui| {
-                    ui.label("Group Name:");
-                    ui.text_edit_singleline(&mut self.group.1.name);
+                    ui.add(
+                        TextEdit::singleline(&mut self.group.1.name)
+                            .hint_text("Group Name")
+                            .id_salt("group_name"),
+                    );
                     ui.horizontal(|ui| {
                         if ui.button("Add").on_hover_text("Add a group").clicked() {
                             config.add_group(self.group.1.clone());

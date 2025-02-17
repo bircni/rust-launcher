@@ -1,4 +1,10 @@
 {
     "rust-analyzer.check.command": "clippy",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true,
+    "editor.semanticTokenColorCustomizations": {
+        "rules": {
+            "*.unsafe:rust": "#eb5046"
+        }
+    }
 }

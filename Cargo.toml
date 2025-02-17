@@ -10,8 +10,13 @@ egui = "0.31"
 image = "0.25.5"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-simple-home-dir = "0.4.6"
+simple-home-dir = "0.4"
 tray-icon = "0.19.2"
+
+[dev-dependencies]
+egui_kittest = { version = "0.31", features = ["wgpu", "snapshot"] }
+eframe = { version = "0.31", features = ["wgpu"] }
+tokio = { version = "1", features = ["time", "rt", "macros"] }
 
 [lints.rust]
 unsafe_code = "deny"

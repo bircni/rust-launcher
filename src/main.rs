@@ -2,7 +2,7 @@
 use std::{cell::RefCell, rc::Rc};
 
 use anyhow::Context as _;
-use data::Config;
+use data::config::Config;
 use egui::ViewportBuilder;
 
 mod data;
@@ -46,12 +46,12 @@ fn main() -> anyhow::Result<()> {
             centered: true,
             ..Default::default()
         },
-        Box::new(|cc| {
+        Box::new(|ctx| {
             #[cfg(not(target_os = "linux"))]
             {
                 tray_icon.borrow_mut().replace(tray);
             }
-            Ok(Box::new(ui::App::new(cc, config)))
+            Ok(Box::new(ui::App::new(&ctx.egui_ctx, config)))
         }),
     )
     .map_err(|e| anyhow::anyhow!(e.to_string()))

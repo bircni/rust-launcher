@@ -1,9 +1,8 @@
-use eframe::CreationContext;
 use egui::{vec2, CentralPanel, Color32, Context, ScrollArea, SidePanel, TextEdit, TextStyle};
 use statusbar::StatusBar;
 use std::f32;
 
-use crate::data::{CommandResult, Config};
+use crate::data::{commands::CommandResult, config::Config};
 
 mod statusbar;
 
@@ -15,8 +14,8 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(cc: &CreationContext<'_>, config: Config) -> Self {
-        cc.egui_ctx.style_mut(|s| {
+    pub fn new(cc: &Context, config: Config) -> Self {
+        cc.style_mut(|s| {
             s.text_styles.insert(
                 TextStyle::Name("subheading".into()),
                 TextStyle::Monospace.resolve(s),
@@ -33,11 +32,8 @@ impl App {
             cmd_result: CommandResult::default(),
         }
     }
-}
 
-/// Main application loop (called every frame)
-impl eframe::App for App {
-    fn update(&mut self, ctx: &Context, _frame: &mut eframe::Frame) {
+    pub fn show(&mut self, ctx: &Context) {
         SidePanel::right("Side Panel").show(ctx, |ui| {
             ui.heading("Last Command Result");
             ui.separator();
@@ -79,5 +75,12 @@ impl eframe::App for App {
                 }
             });
         });
+    }
+}
+
+/// Main application loop (called every frame)
+impl eframe::App for App {
+    fn update(&mut self, ctx: &Context, _frame: &mut eframe::Frame) {
+        self.show(ctx);
     }
 }
