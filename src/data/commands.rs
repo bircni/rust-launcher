@@ -13,19 +13,18 @@ pub struct CommandItem {
 
 impl CommandItem {
     pub fn run(&self) -> CommandResult {
-        // let dir = PathBuf::from(&self.working_dir);
         #[cfg(target_os = "windows")]
         let mut cmd = Command::new("powershell");
         #[cfg(target_os = "linux")]
         let mut cmd = Command::new("bash");
         #[cfg(target_os = "macos")]
-        let mut cmd = Command::new("bash");
+        let mut cmd = Command::new("sh");
         if !self.working_dir.is_empty() {
             cmd.current_dir(&self.working_dir);
         }
-        #[cfg(not(target_os = "macos"))]
+        #[cfg(target_os = "windows")]
         cmd.arg("-C");
-        #[cfg(target_os = "macos")]
+        #[cfg(not(target_os = "windows"))]
         cmd.arg("-c");
         cmd.arg(&self.command);
         match cmd.output() {
