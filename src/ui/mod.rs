@@ -1,18 +1,21 @@
+use eframe::glow;
 use egui::{
-    vec2, Button, CentralPanel, Color32, Context, ScrollArea, SidePanel, TextEdit, TextStyle,
+    vec2, Button, CentralPanel, Color32, Context, RichText, ScrollArea, SidePanel, TextEdit,
+    TextStyle,
 };
 use statusbar::StatusBar;
 use std::f32;
 
-use crate::data::{commands::CommandResult, config::Config};
+use crate::data::{commands::ProcessOutput, config::Config};
 
 mod statusbar;
+mod windows;
 
 pub struct App {
     config: Config,
     statusbar: StatusBar,
     // selected_group: i32,
-    cmd_result: CommandResult,
+    cmd_result: ProcessOutput,
 }
 
 impl App {
@@ -31,7 +34,7 @@ impl App {
             config,
             statusbar: StatusBar::new(),
             // selected_group: 0,
-            cmd_result: CommandResult::default(),
+            cmd_result: ProcessOutput::default(),
         }
     }
 
@@ -54,7 +57,7 @@ impl App {
             self.statusbar
                 .show(ui, &mut self.config)
                 .unwrap_or_else(|e| {
-                    println!("{e:?}");
+                    log::error!("{e:?}");
                     // self.toasts.error(e.to_string());
                 });
             ui.vertical_centered(|ui| {
@@ -63,16 +66,23 @@ impl App {
             ScrollArea::both().show(ui, |ui| {
                 for group in &self.config.groups {
                     ui.heading(&group.name);
-                    for command in &self.config.commands {
+                    for command in &mut self.config.commands {
                         if command.group_id == group.id {
                             ui.horizontal(|ui| {
-                                ui.add(Button::new("Run"))
-                                    .on_hover_text(format!("Run {}", command.name))
-                                    .clicked()
-                                    .then(|| {
-                                        println!("Running command: {}", command.command);
-                                        self.cmd_result = command.run();
-                                    });
+                                ui.add(Button::new(
+                                    RichText::new("Run").color(command.last_run.color()),
+                                ))
+                                .on_hover_text(format!("Run {}", command.name))
+                                .clicked()
+                                .then(|| {
+                                    log::debug!("Running command: {}", command.command);
+                                    self.cmd_result = command.run();
+                                    log::debug!(
+                                        "Command {}: {:?}",
+                                        command.command,
+                                        command.last_run
+                                    );
+                                });
                                 ui.label(format!("{} | {}", command.name, command.command));
                             });
                         }
@@ -87,5 +97,12 @@ impl App {
 impl eframe::App for App {
     fn update(&mut self, ctx: &Context, _frame: &mut eframe::Frame) {
         self.show(ctx);
+    }
+
+    fn on_exit(&mut self, _gl: Option<&glow::Context>) {
+        match self.config.save() {
+            Ok(()) => log::debug!("Config saved"),
+            Err(e) => log::error!("Could not auto save your config: {e:?}"),
+        }
     }
 }

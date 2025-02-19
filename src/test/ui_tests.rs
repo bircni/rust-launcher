@@ -24,7 +24,12 @@ async fn gpu_available() -> bool {
         .is_some()
 }
 
-fn command(harness: &mut Harness<'static>, theme: ThemePreference, cmd: (&str, &str)) {
+fn command(
+    harness: &mut Harness<'static>,
+    theme: ThemePreference,
+    cmd: &(String, String),
+    num: usize,
+) {
     harness
         .get_by_role_and_label(Role::Button, "Add Command")
         .click();
@@ -35,7 +40,7 @@ fn command(harness: &mut Harness<'static>, theme: ThemePreference, cmd: (&str, &
         .get_all_by_role(Role::TextInput)
         .find(|n| n.placeholder().is_some_and(|s| s == "Name"))
         .unwrap()
-        .type_text(cmd.0);
+        .type_text(&cmd.0);
     harness.run();
     // Workaround for the text not being typed in twice
     harness.get_by_role_and_label(Role::Button, "Add").focus();
@@ -44,7 +49,7 @@ fn command(harness: &mut Harness<'static>, theme: ThemePreference, cmd: (&str, &
         .get_all_by_role(Role::MultilineTextInput)
         .find(|n| n.placeholder().is_some_and(|s| s == "Command"))
         .unwrap()
-        .type_text(cmd.1);
+        .type_text(&cmd.1);
 
     harness.run();
     harness.snapshot(&format!("{}_{theme:?}_input_command", cmd.0));
@@ -54,10 +59,11 @@ fn command(harness: &mut Harness<'static>, theme: ThemePreference, cmd: (&str, &
     harness.run();
     harness.snapshot(&format!("{}_{theme:?}_add_command_end", cmd.0));
 
-    // Here we need to click the correct button in the future
     harness
         .get_all_by_role(Role::Button)
-        .find(|n| n.label().is_some_and(|s| s == "Run"))
+        .filter(|n| n.label().is_some_and(|s| s == "Run"))
+        .nth(num)
+        // .find(|n| n.label().is_some_and(|s| s == "Run"))
         .unwrap()
         .click();
 
@@ -72,13 +78,14 @@ pub async fn test_main_view() {
     }
 
     let themes = vec![ThemePreference::Dark, ThemePreference::Light];
-    let commands = vec![
-        ("CMD-1", "echo 'Hello World 1'"),
-        ("CMD-2", "echo 'Hello World 2'"),
-        ("CMD-3", "echo 'Hello World 3'"),
-    ];
 
     for theme in themes {
+        let commands = [
+            ("CMD-1".to_owned(), format!("echo 'Hello {theme:?} Mode'")),
+            ("CMD-2".to_owned(), format!("qwertz 'Hello {theme:?} Mode'")), // Should fail
+            ("CMD-3".to_owned(), "echo 'Hello World 2'".to_owned()),
+        ];
+
         let mut harness = app();
         harness.ctx.set_theme(theme);
 
@@ -106,8 +113,8 @@ pub async fn test_main_view() {
         harness.run();
         harness.snapshot(&format!("{theme:?}_add_group_end"));
 
-        for cmd in &commands {
-            command(&mut harness, theme, *cmd);
+        for (index, cmd) in commands.iter().enumerate() {
+            command(&mut harness, theme, cmd, index);
         }
 
         harness.run();
