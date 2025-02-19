@@ -12,27 +12,23 @@ on:
 
 jobs:
   ci:
-    name: CI on Windows
-    runs-on: windows-latest
+    name: CI on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
         with:
           lfs: true
-      # - name: Install packages (Linux)
-      #   if: runner.os == 'Linux'
-      #   uses: awalsh128/cache-apt-pkgs-action@v1.4.3
-      #   with:
-      #     packages: libgtk-3-dev libxdo-dev libayatana-appindicator3-dev
-      #     version: 1.0
-      #     execute_install_scripts: true
       - uses: Swatinem/rust-cache@v2
-
-      - name: cargo build
-        run: cargo build
 
       - name: cargo fmt
         run: cargo fmt --all -- --check
+
+      - name: cargo build
+        run: cargo build
 
       - name: cargo clippy
         run: cargo clippy -- -D warnings
@@ -45,7 +41,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - uses: crate-ci/typos@v1.19.0
+      - uses: crate-ci/typos@v1.29.8
 
   cargo-machete:
     runs-on: ubuntu-latest

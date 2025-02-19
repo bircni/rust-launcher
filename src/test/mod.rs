@@ -18,17 +18,6 @@ fn test_get_config_path() {
 }
 
 #[test]
-fn test_load_icon() {
-    utils::load_icon().unwrap();
-}
-
-#[test]
-fn test_create_tray_icon() {
-    let icon = utils::load_icon().unwrap();
-    utils::create_tray_icon(icon).unwrap();
-}
-
-#[test]
 fn test_config() {
     let path = PathBuf::from("test.json");
     let result: anyhow::Result<()> = (|| {

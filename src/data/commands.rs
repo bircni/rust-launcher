@@ -1,6 +1,5 @@
-use std::process::Command;
-
 use serde::{Deserialize, Serialize};
+use std::process::Command;
 
 #[derive(Debug, Serialize, Deserialize, Default, Clone)]
 pub struct CommandItem {
@@ -17,12 +16,18 @@ impl CommandItem {
         // let dir = PathBuf::from(&self.working_dir);
         #[cfg(target_os = "windows")]
         let mut cmd = Command::new("powershell");
-        #[cfg(not(target_os = "windows"))]
+        #[cfg(target_os = "linux")]
         let mut cmd = Command::new("sh");
+        #[cfg(target_os = "macos")]
+        let mut cmd = Command::new("bash");
         if !self.working_dir.is_empty() {
             cmd.current_dir(&self.working_dir);
         }
-        cmd.arg("-C").arg(&self.command);
+        #[cfg(not(target_os = "macos"))]
+        cmd.arg("-C");
+        #[cfg(target_os = "macos")]
+        cmd.arg("-c");
+        cmd.arg(&self.command);
         match cmd.output() {
             Ok(output) => CommandResult::new(
                 String::from_utf8_lossy(&output.stdout).to_string(),
