@@ -46,7 +46,17 @@ jobs:
   cargo-machete:
     runs-on: ubuntu-latest
     steps:
-      - uses: Swatinem/rust-cache@v2
       - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
       - name: Machete
         uses: bnjbvr/cargo-machete@main
+
+  publish-check:
+    name: Publish Check
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fetch
+      - name: cargo publish
+        run: cargo publish --dry-run

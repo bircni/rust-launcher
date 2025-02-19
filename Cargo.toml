@@ -1,7 +1,14 @@
 [package]
 name = "rust-launcher"
-version = "0.1.0"
+description = "Launch your commands via GUI"
+repository = "https://github.com/bircni/rust-launcher"
+version = "0.0.1"
+authors = ["bircni"]
 edition = "2021"
+license = "MIT"
+readme = "README.md"
+categories = ["ui", "gui"]
+keywords = ["rust", "launcher", "gui", "ui", "egui"]
 
 [dependencies]
 anyhow = "1"
@@ -15,6 +22,7 @@ simple-home-dir = "0.4"
 egui_kittest = { version = "0.31", features = ["wgpu", "snapshot"] }
 eframe = { version = "0.31", features = ["wgpu"] }
 tokio = { version = "1", features = ["time", "rt", "macros"] }
+wgpu = "24"
 
 [patch.crates-io]
 egui = { git = "https://github.com/bircni/egui.git", branch = "feature/set-hint_text"}

@@ -17,7 +17,7 @@ impl CommandItem {
         #[cfg(target_os = "windows")]
         let mut cmd = Command::new("powershell");
         #[cfg(target_os = "linux")]
-        let mut cmd = Command::new("sh");
+        let mut cmd = Command::new("bash");
         #[cfg(target_os = "macos")]
         let mut cmd = Command::new("bash");
         if !self.working_dir.is_empty() {

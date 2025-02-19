@@ -1,5 +1,6 @@
 use egui::{accesskit::Role, ThemePreference};
 use egui_kittest::{kittest::Queryable, Harness};
+use wgpu::InstanceDescriptor;
 
 use crate::{data::config::Config, ui::App};
 
@@ -10,6 +11,17 @@ pub fn app() -> Harness<'static> {
         let app_instance = app.get_or_insert_with(|| App::new(ctx, Config::default()));
         app_instance.show(ctx);
     })
+}
+
+async fn gpu_available() -> bool {
+    wgpu::Instance::new(&InstanceDescriptor::default())
+        .request_adapter(&wgpu::RequestAdapterOptions {
+            power_preference: wgpu::PowerPreference::HighPerformance,
+            compatible_surface: None,
+            force_fallback_adapter: false,
+        })
+        .await
+        .is_some()
 }
 
 fn command(harness: &mut Harness<'static>, theme: ThemePreference, cmd: (&str, &str)) {
@@ -55,6 +67,10 @@ fn command(harness: &mut Harness<'static>, theme: ThemePreference, cmd: (&str, &
 
 #[tokio::test]
 pub async fn test_main_view() {
+    if !gpu_available().await {
+        return;
+    }
+
     let themes = vec![ThemePreference::Dark, ThemePreference::Light];
     let commands = vec![
         ("CMD-1", "echo 'Hello World 1'"),
