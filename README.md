@@ -1,3 +1,4 @@
+[![CI](https://github.com/bircni/rust-launcher/actions/workflows/ci.yml/badge.svg)](https://github.com/bircni/rust-launcher/actions/workflows/ci.yml)
 # Rust Launcher
 
 Launch your commands with egui.
