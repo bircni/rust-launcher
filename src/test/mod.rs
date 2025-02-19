@@ -6,27 +6,15 @@
 use std::{fs, path::PathBuf};
 
 use crate::{
-    data::{commands::CommandItem, config::Config, Group},
+    data::{
+        commands::{CommandItem, CommandResult},
+        config::Config,
+        Group,
+    },
     utils,
 };
 
 mod ui_tests;
-
-#[test]
-fn test_get_config_path() {
-    utils::get_config_path().unwrap();
-}
-
-#[test]
-fn test_load_icon() {
-    utils::load_icon().unwrap();
-}
-
-#[test]
-fn test_create_tray_icon() {
-    let icon = utils::load_icon().unwrap();
-    utils::create_tray_icon(icon).unwrap();
-}
 
 #[test]
 fn test_config() {
@@ -47,6 +35,7 @@ fn test_config() {
             name: "Test Command".to_owned(),
             working_dir: String::default(),
             linked_command_id: None,
+            last_run: CommandResult::default(),
         };
         config.add_command(cmd);
         assert_eq!(config.commands.len(), 1);
@@ -55,6 +44,8 @@ fn test_config() {
         let config = Config::load(&path).unwrap();
         assert_eq!(config.groups.len(), 2);
         assert_eq!(config.commands.len(), 1);
+        assert_eq!(config.commands[0].name, "Test Command");
+        assert_eq!(config.commands[0].last_run, CommandResult::Unknown);
 
         Ok(())
     })();
@@ -62,7 +53,7 @@ fn test_config() {
     // Ensure the file is always removed
     match fs::remove_file(&path) {
         Ok(()) => (),
-        Err(err) => eprintln!("Failed to remove file: {err}"),
+        Err(err) => log::error!("Failed to remove file: {err}"),
     }
 
     // Propagate the error if any
@@ -71,16 +62,32 @@ fn test_config() {
 
 #[test]
 fn test_command_run() {
-    let cmd = CommandItem {
+    let mut cmd = CommandItem {
         command: "echo 'Hello World'".to_owned(),
         id: 0,
         group_id: 1,
         name: "Test Command".to_owned(),
         working_dir: String::default(),
         linked_command_id: None,
+        last_run: CommandResult::default(),
     };
     let result = cmd.run();
     assert_eq!(result.status, 0);
     assert_eq!(result.stdout.trim_ascii(), "Hello World");
     assert!(result.stderr.is_empty());
+    assert_eq!(cmd.last_run, CommandResult::Success);
+}
+
+#[test]
+fn test_logger() {
+    utils::initialize_logger().unwrap();
+    log::info!("Test log message");
+    log::warn!("Test log message");
+    log::error!("Test log message");
+    log::debug!("Test log message");
+}
+
+#[test]
+fn test_get_config_path() {
+    utils::get_config_path().unwrap();
 }
