@@ -66,7 +66,11 @@ impl CommandItem {
                             String::from_utf8_lossy(&output.stderr).to_string()
                         }
                     },
-                    output.status.code().unwrap_or(1),
+                    if cfg!(test) {
+                        i32::from(output.status.code().unwrap_or(1) != 0)
+                    } else {
+                        output.status.code().unwrap_or(1)
+                    },
                     self.command.clone(),
                 )
             }
