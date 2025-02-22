@@ -7,9 +7,9 @@ use std::{fs, path::PathBuf};
 
 use crate::{
     data::{
+        Group,
         commands::{CommandItem, CommandResult},
         config::Config,
-        Group,
     },
     utils,
 };

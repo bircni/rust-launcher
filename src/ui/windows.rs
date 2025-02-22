@@ -1,6 +1,6 @@
-use egui::{include_image, vec2, Align2, ComboBox, Frame, Image, TextEdit, Ui, Window};
+use egui::{Align2, ComboBox, Frame, Image, TextEdit, Ui, Window, include_image, vec2};
 
-use crate::data::{commands::CommandItem, config::Config, Group};
+use crate::data::{Group, commands::CommandItem, config::Config};
 
 use super::statusbar::StatusBar;
 

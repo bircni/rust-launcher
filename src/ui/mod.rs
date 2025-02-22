@@ -1,7 +1,7 @@
 use eframe::glow;
 use egui::{
-    vec2, Button, CentralPanel, Color32, Context, RichText, ScrollArea, SidePanel, TextEdit,
-    TextStyle,
+    Button, CentralPanel, Color32, Context, RichText, ScrollArea, SidePanel, TextEdit, TextStyle,
+    vec2,
 };
 use statusbar::StatusBar;
 use std::f32;
