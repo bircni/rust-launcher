@@ -31,8 +31,8 @@ anyhow = "1"
 winresource = "0.1"
 
 [patch.crates-io]
-egui = { git = "https://github.com/bircni/egui.git", branch = "feature/set-hint_text"}
-epaint = { git = "https://github.com/bircni/egui.git", branch = "feature/set-hint_text"}
+egui = { git = "https://github.com/emilk/egui.git", branch = "master"}
+epaint = { git = "https://github.com/emilk/egui.git", branch = "master"}
 
 [lints.rust]
 unsafe_code = "deny"
@@ -70,6 +70,7 @@ expect_used = "allow"
 cast_possible_truncation = "allow"
 cast_possible_wrap = "allow"
 cast_sign_loss = "allow"
+shadow-reuse = "allow"
 
 # Additional lints from https://rust-lang.github.io/rust-clippy/master/index.html?groups=restriction
 absolute_paths = "warn"
