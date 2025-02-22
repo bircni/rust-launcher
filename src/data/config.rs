@@ -2,7 +2,7 @@ use anyhow::Context as _;
 use serde::{Deserialize, Serialize};
 use std::{fs, path::PathBuf};
 
-use super::{commands::CommandItem, Group};
+use super::{Group, commands::CommandItem};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {

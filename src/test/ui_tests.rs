@@ -1,5 +1,5 @@
-use egui::{accesskit::Role, ThemePreference};
-use egui_kittest::{kittest::Queryable, Harness};
+use egui::{ThemePreference, accesskit::Role};
+use egui_kittest::{Harness, kittest::Queryable};
 use wgpu::InstanceDescriptor;
 
 use crate::{data::config::Config, ui::App};

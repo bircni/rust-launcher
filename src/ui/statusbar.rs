@@ -1,6 +1,6 @@
 use egui::{Align, Button, Layout, Ui};
 
-use crate::data::{commands::CommandItem, config::Config, Group};
+use crate::data::{Group, commands::CommandItem, config::Config};
 
 pub struct StatusBar {
     pub show_about: bool,
