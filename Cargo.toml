@@ -30,9 +30,9 @@ wgpu = "24"
 anyhow = "1"
 winresource = "0.1"
 
-[patch.crates-io]
-egui = { git = "https://github.com/emilk/egui.git", branch = "master"}
-epaint = { git = "https://github.com/emilk/egui.git", branch = "master"}
+#[patch.crates-io]
+#egui = { git = "https://github.com/emilk/egui.git", branch = "master"}
+#epaint = { git = "https://github.com/emilk/egui.git", branch = "master"}
 
 [lints.rust]
 unsafe_code = "deny"
