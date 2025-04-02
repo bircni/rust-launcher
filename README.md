@@ -12,3 +12,4 @@ Launch your commands with egui.
 - [ ] Add a way to stop a command
 - [ ] Color for working, success and error
 - [ ] Implement egui-notify
+- [ ] fix kittest
